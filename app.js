@@ -14,18 +14,46 @@ function FilmLibrary(){
 
     this.init = () => {
         this.films.push(new Film(1, 'Pulp Fiction', true, dayjs('2022-3-10'), 5));
-        this.films.push(new Film(2, 'Grams', true, dayjs('2022-3-17'), 3));
+        this.films.push(new Film(2, 'Grams', true, dayjs('2022-2-17'), 3));
         this.films.push(new Film(3, 'Star Wars', false));
         this.films.push(new Film(4, 'Matrix', false));
         this.films.push(new Film(5, 'Shrek', false, dayjs('2022-3-21'), 4));
     }
 
+    // get all films
     this.getAll = () => {
         return this.films;
     }
 
+    // get favourite films
+    this.getFavorites = () => {
+        return this.films.filter(f => f.favorite);
+    };
+
+    // get films with 5 star
+    this.getBestRated = () => {
+        return this.films.filter(f => f.rating == 5);
+    };
+
+    // get films seen between last month and today
+    this.getSeenLastMonth = () => {
+        const lastMonth = dayjs().subtract(30, 'day');
+        return this.films.filter(f => f.date !== undefined && f.date.isAfter(lastMonth));
+    }
+
+    // get unseen films
+    this.getUnseen = () => {
+        return this.films.filter(f => f.date === undefined);
+    };
+
     // add new Film
     this.addNewFilm = film => this.films.push(film);
+
+    // change value of film favourite
+    this.changeFavorite = (filmID) => {
+        const film = this.films.find(f => f.filmID === filmID);
+        film.favorite = !film.favorite;
+    };
 
     // sort films by date
     this.sortByDate = () => {
@@ -51,28 +79,19 @@ function FilmLibrary(){
 }
 
 
-
-// STRING LITERAL WAY
-/*function createfilmRow(film) {
-  return `<tr>
-    <td>${film.date.format('YYYY-MM-DD')}</td>
-    <td>${film.name}</td>
-    <td>${film.credits}</td>
-    <td>${film.score} ${(film.laude ? 'L' : '')}</td>
-    <td><button class="btn btn-danger">X</button></td>
-  </tr>`;
-}*/
-
-// CLASSIC WAY: creating the single elements
+// CREATE FILM ROW: creating the single elements
 function createFilmRow(film) {
     const tr = document.createElement('tr');
 
     const tdName = document.createElement('td');
-    tdName.innerText = film.name;
+    // add trash icon + name
+    tdName.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill trash-icon" viewBox="0 0 16 16">
+        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+         </svg> ${film.name}`;
     tr.appendChild(tdName);
     
     const tdFavorite = document.createElement('td');
-    tdFavorite.innerHTML = `<input type="checkbox" ${film.favorite ? 'checked': ''}> Favourite`;
+    tdFavorite.innerHTML = `<input type="checkbox" class="favorite-checkbox" ${film.favorite ? 'checked': ''}> Favourite`;
     tr.appendChild(tdFavorite);
 
     const tdDate = document.createElement('td');
@@ -98,34 +117,84 @@ function createFilmRow(film) {
         i++;
     }
     tr.appendChild(tdStar);
-
-    /*
-    const tdActions = document.createElement('td');
-    tdActions.innerHTML = `<button id="film-${film.code}" class="btn btn-danger">X</button>`;
-    tr.appendChild(tdActions);
-
-    tdActions.addEventListener('click', e => {
-        tr.remove();
-        console.log(e.target.id);
-    });
-*/
     return tr;
 }
 
-function fillFilmTable(films) {
-  const filmTable = document.getElementById('film-table-body');
 
-  for(const film of films) {
-    const filmEl = createFilmRow(film);
-    // classic way:
-    filmTable.prepend(filmEl);
-    // string literal way:
-    //filmTable.insertAdjacentHTML('afterbegin', filmEl);
-  }
+// Fill Table
+function fillFilmTable(filmLib, films) {
+    const filmTableHeader = document.getElementById('film-table-header');
+    const filmTable = document.getElementById('film-table-body');
+    // set filter text as header
+    filmTableHeader.innerText = `${document.getElementById('filters').querySelector('.active').innerText}`;
+    for(const film of films) {
+        const filmEl = createFilmRow(film);
+        // add event to trash icon (delete film from filmLib)
+        filmEl.querySelector('.trash-icon').addEventListener('click', e => {
+            filmLib.deleteFilm(film.filmID);
+            filmEl.innerHTML = '';
+        });
+
+        filmEl.querySelector('.favorite-checkbox').addEventListener('click', e => {
+            filmLib.changeFavorite(film.filmID);
+            // if active filter is favorites then remove element
+            if(filmTableHeader.innerText === 'Favorites')
+                filmEl.innerHTML = '';
+        });
+        filmTable.prepend(filmEl);
+    }
 }
+
+// Delete Table
+function deleteFilmTable(){
+    const filmTable = document.getElementById('film-table-body');
+    filmTable.innerHTML = '';
+}
+
+// Add EventListener for filters
+function addFilterEvents(filmLib){
+    const filters = document.getElementById('filters');
+    for(let el of filters.getElementsByTagName('a')){
+        el.addEventListener('click', e => {
+            filters.querySelector('.active').classList.remove('active');       // remove active element
+            el.classList.add('active');                                        // set element as active
+            applyFilter(el.id, filmLib);
+        });
+    }
+}
+
+// Apply filters
+function applyFilter(filterID, filmLib){
+    deleteFilmTable();
+    switch(filterID){
+        case 'filter-all':{
+            fillFilmTable(filmLib, filmLib.getAll());
+            break;
+        }
+        case 'filter-favorites':{
+            fillFilmTable(filmLib ,filmLib.getFavorites());
+            break;
+        }
+        case 'filter-best':{
+            fillFilmTable(filmLib, filmLib.getBestRated());
+            break;
+        }
+        case 'filter-seen-last-month':{
+            fillFilmTable(filmLib, filmLib.getSeenLastMonth());
+            break;
+        }
+        case 'filter-unseen':{
+            fillFilmTable(filmLib, filmLib.getUnseen());
+            break;
+        }
+        default:{ }
+    }
+}
+
+
 
 /* Main */
 const filmLib = new FilmLibrary();
 filmLib.init();
-const films = filmLib.getAll();
-fillFilmTable(films);
+addFilterEvents(filmLib);
+fillFilmTable(filmLib, filmLib.getAll());

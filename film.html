@@ -28,17 +28,17 @@
     <body>
         <header>
              <!-- Bootstrap navbar -->
-            <nav class="navbar navbar-dark bg-primary">
+            <nav class="navbar navbar-dark bg-primary m-1">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">
-                      <img src="logos/collection-play.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                    <a class="navbar-brand m-0" href="#">
+                      <img src="icons/collection-play.svg" alt="" width="30" height="28" class="d-inline-block align-text-top">
                       Film Library
                     </a>
-                    <form class="d-flex">
+                    <form class="d-flex m-0">
                       <input class="form-control me-2 mx-auto" type="search" placeholder="Search" aria-label="Search">
                     </form>
                     <a class="navbar-brand" href="#">
-                        <img src="logos/person-circle.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                        <img src="icons/person-circle.svg" alt="" width="30" height="28" class="d-inline-block align-text-top">
                     </a>
                   </div>
               </nav>
@@ -54,29 +54,40 @@
                                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
-                                <div class="collapse navbar-collapse" id="navbarToggler">
-                                    <ul class="list-unstyled">
-                                        <li class="bar-items"> <h1>All</h1> </li>
-                                        <li class="bar-items"> <p>Favorites</p> </li>
-                                        <li class="bar-items"> <p>Best Rated</p> </li>
-                                        <li class="bar-items"> <p>Last Seen</p> </li>
-                                        <li class="bar-items"> <p>Seen Last Month</p> </li>
+                                <div class="collapse navbar-collapse mt-4" id="navbarToggler">                           
+                                    <ul class="list-unstyled" id="filters">
+                                        <li class="list-group">
+                                            <a href="#" id="filter-all" class="list-item active">All</a>
+                                        </li>
+                                        <li class="list-group">
+                                            <a href="#" id="filter-favorites" class="list-item">Favorites</a>
+                                        </li>
+                                        <li class="list-group">
+                                            <a href="#" id="filter-best" class="list-item">Best Rated</a>
+                                        </li>                                        
+                                        <li class="list-group">
+                                            <a href="#" id="filter-seen-last-month" class="list-item">Seen Last Month</a>                                            
+                                        </li>
+                                        <li class="list-group">
+                                            <a href="#" id="filter-unseen" class="list-item">Unseen</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </nav>
-                    </div>   
+                    </div>  
+
                      <!-- Table -->
-                    <div class="col-9  mt-5 g-5">
+                    <div class="col-9 mt-5 g-5">
                         <div class="table-responsive">
                             <table class="table table-hover">
-                                <thead class="table-light" id="film-table-header">
-                                    <tr>
-                                        <th scope="col">All</th>
-                                    </tr>
+                                <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" id="film-table-header"></th>
+                                        </tr>
                                 </tdead>
                                 <tbody id="film-table-body">
-                                    
+                                
                                 </tbody>
                             </table>
                         </div>

@@ -6,25 +6,36 @@
     background-color: var(--sidebar-color);
 }
 
-.bar-items {
+
+.list-group {
     padding-left: 0;
+    margin: 5px;
+    font-size: 24px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-.bar-items h1 {
-    margin-top: 1em;
-    background-color: var(--main-color);
+
+.list-item {
+    background-color: transparent;
     width: 20vw;
-    text-indent: 8px;
-}
-
-.bar-items p {
-    margin-left: 1em;
+    text-decoration: none;
     border-bottom: 1px solid;
+    text-indent: 10px;
 }
 
-.bar-items p:hover{
-    margin-left: 1em;
-    background-color: var(--sidebar-element-color);
+.list-item.active{
+    background-color: var(--sidebar-active-bg-color);
+    border-color: var(--sidebar-active-border-color);
+    color: var(--sidebar-active-text-color);
+    font-size: 28px;
+    text-indent: 5px;
+    border-bottom: none;
+}
+
+.list-item:hover {
+    background-color: var(--sidebar-hover-bg-color);
+    margin: 1px;
+    color: white;
 }
 
 .no-lt-padding{
@@ -32,15 +43,25 @@
     padding-top: 0;
 }
 
-
 .empty-star:hover {
-    fill: #0e86d4;
-    color: #055c9d;
+    fill: var(--star-fill-hover);
+    color: var(--star-color-hover);
+}
+
+.trash-icon:hover{
+    fill: var(--trash-fill-hover);
+    color: var(--trash-color-hover);
 }
 
 :root {
     --main-color:#0d6dfdb6;
     --sidebar-color: rgb(245, 248, 255);
-    --sidebar-header-color: rgb(81, 122, 255);
-    --sidebar-element-color: #0d6dfd44;
+    --sidebar-active-bg-color: #055c9d;
+    --sidebar-active-border-color:  #055c9d;
+    --sidebar-active-text-color:  white;
+    --sidebar-hover-bg-color:  #055c9d;
+    --star-fill-hover: #0e86d4;
+    --star-color-hover:  #055c9d;
+    --trash-fill-hover: rgba(255, 0, 0, 0.664);
+    --trash-color-hover: rgba(255, 0, 0, 0.664);
 }
